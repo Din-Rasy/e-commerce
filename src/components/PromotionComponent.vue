@@ -1,72 +1,156 @@
-<script setup>
-import ButtonComponent from './ButtonComponent.vue';
-
-const { title, image, color, buttonColor, url, buttonText } = defineProps({
-  title: { type: String, required: true },
-  image: { type: String, default: '' },
-  color: { type: String, default: '#ffffff' },
-  buttonColor: { type: String, default: '#42B678' },
-  url: { type: String, default: '#' },
-  buttonText: { type: String, default: 'Shop Now' }
-});
-
-const resolveImage = (src) => {
-  if (!src) return '';
-  // If path is absolute (starts with '/') it's served from public/ and can be used directly
-  if (src.startsWith('/')) return src;
-  try {
-    return new URL(src, import.meta.url).href;
-  } catch {
-    return src;
-  }
-};
-
-const promotion = { title, image, color, buttonColor, url };
-
-const shopNow = (promo) => {
-
-  if (promo && promo.title) {
-    window.alert("Let's shop: " + promo.title);
-  } else {
-    window.alert("Let's shop!");
-  }
-};
-</script>
-
 <template>
-  <div class="promotion-card" :style="{ backgroundColor: color }">
-    <div class="promo-content">
-      <h3 class="promo-title">{{ title }}</h3>
-      <ButtonComponent :btnText="buttonText" :btnColor="buttonColor" @click="shopNow(promotion)" />
+  <div class="promotion-banner" :style="{ backgroundColor: color }">
+    <div class="promotion-content">
+      <h2 class="promotion-title">{{ title }}</h2>
+      <ButtonComponent :color="buttonColor" @click="shopNow(promotion)">
+        Shop Now →
+      </ButtonComponent>
     </div>
-    <div class="promo-image" v-if="image">
-      <img :src="resolveImage(image)" :alt="title" />
+    <div class="promotion-image-container" :style="imageContainerStyle">
+      <img :src="image" :alt="title" class="promotion-image" :style="imageStyle" />
     </div>
   </div>
 </template>
 
+<script>
+import ButtonComponent from './ButtonComponent.vue'
+export default {
+  name: 'PromotionComponent',
+  components: { ButtonComponent },
+  props: {
+    title: {
+      type: String,
+      required: true,
+    },
+    color: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    buttonColor: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+    imageContainerWidth: {
+      type: String,
+      default: '100px',
+    },
+    imageContainerHeight: {
+      type: String,
+      default: '100%',
+    },
+    imageWidth: {
+      type: String,
+      default: '100%',
+    },
+    imageHeight: {
+      type: String,
+      default: '100%',
+    },
+    imageMaxHeight: {
+      type: String,
+      default: '160px',
+    },
+    imageObjectFit: {
+      type: String,
+      default: 'contain',
+    },
+  },
+  computed: {
+    promotion() {
+      return {
+        title: this.title,
+        url: this.url,
+      }
+    },
+    imageContainerStyle() {
+      return {
+        width: this.imageContainerWidth,
+        height: this.imageContainerHeight,
+      }
+    },
+    imageStyle() {
+      return {
+        width: this.imageWidth,
+        height: this.imageHeight,
+        maxHeight: this.imageMaxHeight,
+        objectFit: this.imageObjectFit,
+      }
+    },
+  },
+  methods: {
+    shopNow(promotion) {
+      alert("Let's shop: " + promotion.title)
+    },
+  },
+}
+</script>
+
 <style scoped>
-.promotion-card {
+.promotion-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
-  border-radius: 12px;
-  min-width: 280px;
-  flex: 1 1 320px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-.promo-content {
-  max-width: 60%;
-}
-.promo-title {
-  font-size: 18px;
-  margin: 0 0 12px 0;
-}
-.promo-image img {
-  max-width: 140px;
-  height: auto;
+  padding: 10px;
   border-radius: 8px;
+  width: 360px;
+  height: 180px;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
-a { text-decoration: none; }
+
+.promotion-content {
+  flex: 1;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.promotion-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.shop-now-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+
+.promotion-image-container {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
 </style>
+

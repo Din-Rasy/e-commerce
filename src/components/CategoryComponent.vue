@@ -1,67 +1,84 @@
-<script setup>
-const { name, imgSrc, productCount, color } = defineProps({
-	name: {
-		type: String,
-		required: true
-	},
-	imgSrc: {
-		type: String,
-		default: ''
-	},
-	productCount: {
-		type: [Number, String],
-		default: 0
-	},
-	color: {
-		type: String,
-		default: '#ffffff'
-	}
-});
-
-const resolveImage = (src) => {
-	if (!src) return '';
-	try {
-		return new URL(src, import.meta.url).href;
-	} catch {
-		return src;
-	}
-};
-</script>
-
 <template>
-	<div class="category-card" :style="{ backgroundColor: color }">
-		<img v-if="imgSrc" :src="resolveImage(imgSrc)" :alt="name" />
-		<div class="category-info">
-			<strong class="name">{{ name }}</strong>
-			<small class="count">{{ productCount }} items</small>
-		</div>
-	</div>
+  <div class="category-card" :style="{ backgroundColor: color }">
+    <img :src="image" :alt="name" class="category-image" />
+    <h3 class="category-name">{{ name }}</h3>
+    <p class="product-count">{{ productCount }} items</p>
+  </div>
 </template>
+
+<script>
+export default {
+  name: 'CategoryComponent',
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    productCount: {
+      type: Number,
+      required: true,
+    },
+    color: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+  },
+}
+</script>
 
 <style scoped>
 .category-card {
-	width: 100px;
-	padding: 12px;
-	border-radius: 12px;
-	text-align: center;
-	font-size: 13px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  width: 100px;
+  height: 140px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-shrink: 0;
+}
 
-	box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+.category-image {
+  width: 100%;
+  max-width: 70px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
-.category-card img {
-	width: 64px;
-	height: 64px;
-	object-fit: cover;
-	border-radius: 10px;
+
+.category-name {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-height: 2.6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
-.category-info .name {
-	display: block;
-	margin-top: 2px;
-}
-.category-info .count {
-	color: #7a7a7a;
+
+.product-count {
+  margin: 4px 0 0 0;
+  font-size: 10px;
+  color: #666;
 }
 </style>
+
