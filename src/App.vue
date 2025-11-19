@@ -35,6 +35,7 @@ import axios from 'axios';
 import CategoryComponent from './components/CategoryComponent.vue'
 import PromotionComponent from './components/PromotionComponent.vue'
 
+
 export default {
   name: 'App',
   components: {
@@ -153,22 +154,44 @@ export default {
   },
   methods: {
     async fetchCategories() {
-      try {
-        const res = await axios.get("http://localhost:3000/api/categories");
-        this.categories = res.data; // Save backend categories
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    },
+  try {
+    const res = await axios.get("http://localhost:3000/api/categories");
+
+    this.categories = res.data.map(item => {
+      // 1. Fix Windows path → convert \ to /
+      item.image = item.image.replace(/\\/g, "/");
+
+      // 2. Add host URL (important!)
+      item.image = "http://localhost:3000/" + item.image;
+
+      return item;
+    });
+
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+},
+
 
     async fetchPromotions() {
-      try {
-        const res = await axios.get("http://localhost:3000/api/promotions");
-        this.promotions = res.data; // Save backend promotions
-      } catch (error) {
-        console.error("Error fetching promotions:", error);
-      }
-    },
+  try {
+    const res = await axios.get("http://localhost:3000/api/promotions");
+
+    this.promotions = res.data.map(item => {
+      // 1. Fix Windows-style path
+      item.image = item.image.replace(/\\/g, "/");
+
+      // 2. Add full backend URL so browser can load image
+      item.image = "http://localhost:3000/" + item.image;
+
+      return item;
+    });
+
+  } catch (error) {
+    console.error("Error fetching promotions:", error);
+  }
+},
+
   },
 
   mounted() {
