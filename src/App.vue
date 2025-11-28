@@ -1,19 +1,29 @@
 <template>
   <div class="app">
+
+    <!-- Top: Featured Categories -->
+    <MenuComponent
+      :title="featuredTitle"
+      :menus="menuItems"
+      :activeMenu="selectedMenu"
+      @change="selectedMenu = $event"
+    />
+
     <div class="categories-section">
       <CategoryComponent
         v-for="category in categories"
-        :key="category"
+        :key="category._id || category.name"
         :name="category.name"
         :product-count="category.productCount"
         :color="category.color"
         :image="category.image"
       />
     </div>
+
     <div class="promotions-section">
       <PromotionComponent
         v-for="promotion in promotions"
-        :key="promotion.url"
+        :key="promotion._id || promotion.url"
         :title="promotion.title"
         :color="promotion.color"
         :image="promotion.image"
@@ -27,27 +37,228 @@
         :image-object-fit="promotion.imageObjectFit"
       />
     </div>
+
+    <!-- Bottom: Popular Products -->
+    <MenuComponent
+      :title="popularTitle"
+      :menus="menuItems"
+      :activeMenu="selectedMenu"
+      @change="selectedMenu = $event"
+    />
+
+    <div class="products-section">
+      <ProductComponent
+        v-for="product in products"
+        :key="product._id || product.name"
+        :image="product.image"
+        :category="product.category"
+        :name="product.name"
+        :weight="product.weight"
+        :price="product.price"
+        :oldPrice="product.oldPrice"
+        :badge="product.badge"
+      />
+    </div>
+
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import CategoryComponent from './components/CategoryComponent.vue'
-import PromotionComponent from './components/PromotionComponent.vue'
+import axios from "axios";
 
+import CategoryComponent from "./components/CategoryComponent.vue";
+import PromotionComponent from "./components/PromotionComponent.vue";
+import MenuComponent from "./components/MenuComponent.vue";
+import ProductComponent from "./components/ProductComponent.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
+    MenuComponent,
     CategoryComponent,
     PromotionComponent,
+    ProductComponent,
   },
   data() {
     return {
+      selectedMenu: "All",
+
+      featuredTitle: "Featured Categories",
+      popularTitle: "Popular Products",
+
+      menuItems: [
+        "All",
+        "Milks & Dairies",
+        "Coffes & Teas",
+        "Pet Foods",
+        "Meats",
+        "Vegetables",
+        "Fruits",
+      ],
+
       categories: [],
       promotions: [],
 
-      // categories: [
+      products: [
+        {
+          name: "Seeds of Change Organic Quinoa, Brown, & Red Rice",
+          category: "Fruits",
+          weight: "500g",
+          price: 2.51,
+          oldPrice: 2.80,
+          image: "/product/Mango.jpg",
+          badge: "-17%",
+        },
+        {
+          name: "Foster Farms Takeout Crispy Classic Buffalo Wings",
+          category: "Vegetables",
+          weight: "500g",
+          price: 3.00,
+          oldPrice: 3.50,
+          image: "/product/Bell peppers.png",
+          badge: "Hot",
+        },
+        {
+          name: "All Natural Italian-Style Chicken Meatballs",
+          category: "Vegetables",
+          weight: "500g",
+          price: 1.49,
+          oldPrice: 1.89,
+          image: "/product/Corn.png",
+          badge: "Sale",
+        },
+        {
+          name: "Blue Diamond Almonds Lightly Salted Vegetables",
+          category: "Fruits",
+          weight: "500g",
+          price: 2.20,
+          oldPrice: 2.60,
+          image: "/product/Green grapes.png",
+        },
+        {
+          name: "Angie’s Boomchickapop Sweet & Salty Kettle Corn",
+          category: "Fruits",
+          weight: "500g",
+          price: 2.80,
+          oldPrice: 3.10,
+          image: "/product/Mandarins.png",
+          badge: "-10%",
+        },
+        {
+          name: "Encore Seafoods Stuffed Alaskan Salmon",
+          category: "Meats",
+          weight: "500g",
+          price: 5.80,
+          oldPrice: 6.30,
+          image: "/product/Roast beef.png",
+        },
+        {
+          name: "Gorton’s Beer Battered Fish Fillets with soft paper",
+          category: "Meats",
+          weight: "500g",
+          price: 4.20,
+          oldPrice: 4.60,
+          image: "/product/Bacon strips.png",
+        },
+        {
+          name: "Canada Dry Ginger Ale – 2 L Bottle - 200ml - 400g",
+          category: "Meats",
+          weight: "500g",
+          price: 3.60,
+          oldPrice: 4.10,
+          image: "/product/Cheese.png",
+        },
+        {
+          name: "Chobani Complete Vanilla Greek Yogurt",
+          category: "Meats",
+          weight: "500g",
+          price: 4.99,
+          oldPrice: 5.50,
+          image: "/product/Raw pork.png",
+        },
+        {
+          name: "Haagen-Dazs Caramel Cone Ice Cream Ketchup",
+          category: "Vegetables",
+          weight: "500g",
+          price: 1.90,
+          oldPrice: 2.30,
+          image: "/product/Red beetroot.png",
+          badge: "Hot",
+        },
+      ]
+
+    };
+  },
+
+  methods: {
+    async fetchCategories() {
+      try {
+        const res = await axios.get("http://localhost:3000/api/categories");
+        this.categories = res.data.map((item) => ({
+          ...item,
+          image: "http://localhost:3000/" + item.image.replace(/\\/g, "/"),
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async fetchPromotions() {
+      try {
+        const res = await axios.get("http://localhost:3000/api/promotions");
+        this.promotions = res.data.map((item) => ({
+          ...item,
+          image: "http://localhost:3000/" + item.image.replace(/\\/g, "/"),
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
+
+  mounted() {
+    this.fetchCategories();
+    this.fetchPromotions();
+  },
+};
+</script>
+
+<style scoped>
+.app {
+  padding: 20px;
+}
+
+/* Category Cards */
+.categories-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 40px;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+/* Promotions Cards */
+.promotions-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* Product Cards Section */
+.products-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+</style>
+
+
+
+// categories: [
       //   {
       //     name: 'Cake & Milk',
       //     productCount: 14,
@@ -150,98 +361,3 @@ export default {
       //     imageObjectFit: 'contain',
       //   },
       // ],
-    }
-  },
-  methods: {
-    async fetchCategories() {
-  try {
-    const res = await axios.get("http://localhost:3000/api/categories");
-
-    this.categories = res.data.map(item => {
-      // 1. Fix Windows path → convert \ to /
-      item.image = item.image.replace(/\\/g, "/");
-
-      // 2. Add host URL (important!)
-      item.image = "http://localhost:3000/" + item.image;
-
-      return item;
-    });
-
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-  }
-},
-
-
-    async fetchPromotions() {
-  try {
-    const res = await axios.get("http://localhost:3000/api/promotions");
-
-    this.promotions = res.data.map(item => {
-      // 1. Fix Windows-style path
-      item.image = item.image.replace(/\\/g, "/");
-
-      // 2. Add full backend URL so browser can load image
-      item.image = "http://localhost:3000/" + item.image;
-
-      return item;
-    });
-
-  } catch (error) {
-    console.error("Error fetching promotions:", error);
-  }
-},
-
-  },
-
-  mounted() {
-    this.fetchCategories();
-    this.fetchPromotions();
-  },
-};
-
-</script>
-
-<style scoped>
-.app {
-  padding: 20px;
-}
-
-.categories-section {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 12px;
-  margin-bottom: 40px;
-  justify-content: center;
-  overflow-x: auto;
-  padding: 10px 0;
-}
-
-.categories-section::-webkit-scrollbar {
-  height: 6px;
-}
-
-.categories-section::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-.categories-section::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-.categories-section::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-.promotions-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-}
-
-
-</style>
-

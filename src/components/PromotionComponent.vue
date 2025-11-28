@@ -100,8 +100,8 @@ export default {
   justify-content: space-between;
   padding: 10px;
   border-radius: 8px;
-  width: 360px;
-  height: 180px;
+  width: 440px;
+  height: 220px;
   gap: 12px;
   position: relative;
   overflow: hidden;
@@ -146,11 +146,18 @@ export default {
 
 
 .promotion-image-container {
+  width: 200px;
+  height: 200px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1;
+}
+.promotion-image {
+  width: 180px;
+  height: auto;
+  object-fit: contain;
 }
 </style>
 

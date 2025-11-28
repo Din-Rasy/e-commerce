@@ -30,7 +30,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<!-- <style scoped>
 .category-card {
   border-radius: 8px;
   padding: 10px;
@@ -78,6 +78,42 @@ export default {
 .product-count {
   margin: 4px 0 0 0;
   font-size: 10px;
+  color: #666;
+}
+</style>
+ -->
+<style scoped>
+.category-card {
+  width: 200px;
+  height: 220px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  padding: 12px;
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.category-card:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.category-image {
+  width: 90%;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.category-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.category-count {
+  font-size: 0.9rem;
   color: #666;
 }
 </style>
