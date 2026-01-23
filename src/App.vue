@@ -54,9 +54,12 @@
         :category="product.category"
         :name="product.name"
         :weight="product.weight"
+        :size="product.size"
         :price="product.price"
         :oldPrice="product.oldPrice"
         :badge="product.badge"
+        :rating="product.rating"
+        :promotionAsPercentage="product.promotionAsPercentage"
       />
     </div>
 
@@ -99,93 +102,7 @@ export default {
       categories: [],
       promotions: [],
 
-      products: [
-        {
-          name: "Seeds of Change Organic Quinoa, Brown, & Red Rice",
-          category: "Fruits",
-          weight: "500g",
-          price: 2.51,
-          oldPrice: 2.80,
-          image: "/product/Mango.jpg",
-          badge: "-17%",
-        },
-        {
-          name: "Foster Farms Takeout Crispy Classic Buffalo Wings",
-          category: "Vegetables",
-          weight: "500g",
-          price: 3.00,
-          oldPrice: 3.50,
-          image: "/product/Bell peppers.png",
-          badge: "Hot",
-        },
-        {
-          name: "All Natural Italian-Style Chicken Meatballs",
-          category: "Vegetables",
-          weight: "500g",
-          price: 1.49,
-          oldPrice: 1.89,
-          image: "/product/Corn.png",
-          badge: "Sale",
-        },
-        {
-          name: "Blue Diamond Almonds Lightly Salted Vegetables",
-          category: "Fruits",
-          weight: "500g",
-          price: 2.20,
-          oldPrice: 2.60,
-          image: "/product/Green grapes.png",
-        },
-        {
-          name: "Angie’s Boomchickapop Sweet & Salty Kettle Corn",
-          category: "Fruits",
-          weight: "500g",
-          price: 2.80,
-          oldPrice: 3.10,
-          image: "/product/Mandarins.png",
-          badge: "-10%",
-        },
-        {
-          name: "Encore Seafoods Stuffed Alaskan Salmon",
-          category: "Meats",
-          weight: "500g",
-          price: 5.80,
-          oldPrice: 6.30,
-          image: "/product/Roast beef.png",
-        },
-        {
-          name: "Gorton’s Beer Battered Fish Fillets with soft paper",
-          category: "Meats",
-          weight: "500g",
-          price: 4.20,
-          oldPrice: 4.60,
-          image: "/product/Bacon strips.png",
-        },
-        {
-          name: "Canada Dry Ginger Ale – 2 L Bottle - 200ml - 400g",
-          category: "Meats",
-          weight: "500g",
-          price: 3.60,
-          oldPrice: 4.10,
-          image: "/product/Cheese.png",
-        },
-        {
-          name: "Chobani Complete Vanilla Greek Yogurt",
-          category: "Meats",
-          weight: "500g",
-          price: 4.99,
-          oldPrice: 5.50,
-          image: "/product/Raw pork.png",
-        },
-        {
-          name: "Haagen-Dazs Caramel Cone Ice Cream Ketchup",
-          category: "Vegetables",
-          weight: "500g",
-          price: 1.90,
-          oldPrice: 2.30,
-          image: "/product/Red beetroot.png",
-          badge: "Hot",
-        },
-      ]
+      products: [],
 
     };
   },
@@ -214,11 +131,52 @@ export default {
         console.error(error);
       }
     },
+
+    // async fetchProducts() {
+    //   try {
+    //     const res = await axios.get("http://localhost:3000/api/products");
+    //     this.products = res.data.map((item) => {
+    //       let imagePath = "/product/default.jpg";
+    //       if (item.image) {
+    //         try {
+    //           const images = JSON.parse(item.image);
+    //           if (Array.isArray(images) && images.length > 0) {
+    //             imagePath = "http://localhost:3000/" + images[0].replace(/\\/g, "/");
+    //           } else if (typeof item.image === 'string') {
+    //             imagePath = "http://localhost:3000/" + item.image.replace(/\\/g, "/");
+    //           }
+    //         } catch (e) {
+    //           imagePath = "http://localhost:3000/" + item.image.replace(/\\/g, "/");
+    //         }
+    //       }
+    //       return {
+    //         ...item,
+    //         image: imagePath,
+    //         rating: item.rating || 4.0,
+    //         promotionAsPercentage: item.promotionAsPercentage || 0
+    //       };
+    //     });
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // },
+    async fetchProducts() {
+      try {
+        const res = await axios.get("http://localhost:3000/api/products");
+        this.products = res.data.map((item) => ({
+          ...item,
+          image: "http://localhost:3000/" + item.image.replace(/\\/g, "/"),
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 
   mounted() {
     this.fetchCategories();
     this.fetchPromotions();
+    this.fetchProducts();
   },
 };
 </script>
