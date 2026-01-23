@@ -135,37 +135,20 @@ export default {
     async fetchProducts() {
       try {
         const res = await axios.get("http://localhost:3000/api/products");
-        this.products = res.data.map((item) => {
-          let imagePath = "/product/default.jpg";
-          if (item.image) {
-            try {
-              const images = JSON.parse(item.image);
-              if (Array.isArray(images) && images.length > 0) {
-                imagePath = "http://localhost:3000/" + images[0].replace(/\\/g, "/");
-              } else if (typeof item.image === 'string') {
-                imagePath = "http://localhost:3000/" + item.image.replace(/\\/g, "/");
-              }
-            } catch (e) {
-              imagePath = "http://localhost:3000/" + item.image.replace(/\\/g, "/");
-            }
-          }
-          return {
-            ...item,
-            image: imagePath,
-            rating: item.rating || 4.0,
-            promotionAsPercentage: item.promotionAsPercentage || 0
-          };
-        });
+        this.products = res.data.map((item) => ({
+          ...item,
+          image: "http://localhost:3000/" + item.image.replace(/\\/g, "/"),
+        }));
       } catch (error) {
         console.error(error);
       }
     },
+
   },
 
   mounted() {
     this.fetchCategories();
     this.fetchPromotions();
-    this.fetchProducts();
   },
 };
 </script>
